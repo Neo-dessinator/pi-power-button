@@ -1,12 +1,18 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
+# use howchoo shutdown script. install the script which launch this one in /etc/init.d
+# install gpiozero with sudo apt install python3-gpiozero
+# put this script in /usr/local/bin/listen-for-shutdown.py
 
 
-import RPi.GPIO as GPIO
+from gpiozero import Button
 import subprocess
+import time
 
+def longpress():
+    subprocess.call(['shutdown', '-h', 'now'], shell=False)
 
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(3, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-GPIO.wait_for_edge(3, GPIO.FALLING)
+button = Button(3, hold_time=2)
+button.when_held = longpress
 
-subprocess.call(['shutdown', '-h', 'now'], shell=False)
+while 1:
+    time.sleep(1)
